@@ -4,8 +4,8 @@ WORKDIR /app
 
 RUN npm -g install serve
 
-COPY package.json ./
-COPY package-lock.json ./
+COPY package.json /app
+COPY package-lock.json /app
 
 RUN npm install
 
