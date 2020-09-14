@@ -1,6 +1,6 @@
-FROM node:12
+FROM node:12.8
 
-WORKDIR /table_test
+WORKDIR /app
 
 RUN npm -g install serve
 
@@ -8,7 +8,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY src /table_test
+COPY src /app
 
 RUN npm run build
 
