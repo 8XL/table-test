@@ -5,7 +5,6 @@ export const fetchUsers = async (size) =>{
     const { data } = await axios
         .get(endUrl)
         .catch(err => console.log(err));
-        console.log(data)
     return data
 };
 

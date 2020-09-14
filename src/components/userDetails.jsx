@@ -12,5 +12,5 @@ export const UserDetails = ({ user }) => {
             <p>Провинция/штат: <b>{ user.address.state }</b> </p>
             <p>Индекс: <b>{ user.address.zip }</b> </p>
         </div>
-    )
-}
+    );
+};

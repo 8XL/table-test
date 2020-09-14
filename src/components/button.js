@@ -10,4 +10,4 @@ export const Button = ({rows, setData, getFilter}) => {
             <button className='btn btn-outline-primary' name='search' form='search' onClick={ getFilter }>Search</button>
         );
     };    
-}
+};

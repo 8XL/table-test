@@ -6,13 +6,15 @@ import './App.css';
 import { fetchUsers } from './api/fetchData';
 import reducer from './reducer';
 
-import { Table, UserDetails, Button, SearchPanel } from './components';
+import { Table, UserDetails, Button, SearchPanel, Loader } from './components';
 
 function App() {
-  const [state, dispatch] = React.useReducer(reducer,{
+  const [state, dispatch] = React.useReducer(reducer, {
     data: null,
     fullData: null,
     filteredData: null,
+
+    loading: false,
 
     sortOrder: 'asc', 
     sortName: null,
@@ -26,10 +28,16 @@ function App() {
 
     form: null,
     search: false
-  })
+  });
 
-  const setData = async (e) =>{
-    console.log(e.target.name)
+  const toggleLoading = () =>{ //переключатель рендера анимации загрузки
+    dispatch({
+      type: 'TOGGLE_LOADING'
+    })
+  }
+
+  const setData = async (e) =>{ // загрузка данных со стороннего апи
+    !state.data&&toggleLoading();
     const data = await fetchUsers(e.target.name);
     dispatch({
       type: 'SET_DATA',
@@ -37,40 +45,41 @@ function App() {
     })
   };
 
-  const sortData = (e) =>{
+  const sortData = (e) =>{ // сортировка таблицы по наименованию столбоцов
     dispatch({
       type: 'SORT_DATA',
       payload: e.target.id
     })
   };
 
-  const setUserInfo = (user) =>{
+  const setUserInfo = (user) =>{ // карточка юзера
     dispatch({
       type: 'SET_USER',
       payload: user
     })
   };
 
-  const setPage = ({ selected }) =>{
+  const setPage = ({ selected }) =>{ // привязка к пагинации
     dispatch({
       type: 'SET_PAGE',
       payload: selected+1
-    });
+    })
   };
 
-  const changeForm = (e) =>{
+  const changeForm = (e) =>{ // изменение инпута поиска
     dispatch({
       type: 'SET_FORM',
       payload: e.target.value
     })
   };
 
-  const getFilter = () => {
+  const getFilter = () => { // активация поиска
     dispatch({
       type: 'SEARCH_FILTER'
     })
-  }
+  };
 
+  //фильтрация в случае активации поиска
   const filteredData = () =>{
     if(!state.search)return state.data;
 
@@ -88,31 +97,41 @@ function App() {
   
   return (
     <div className="App">
-      <Button 
-        rows={32} 
-        setData={ setData }
-      />
-      <Button 
-        rows={1000} 
-        setData={ setData }
-      />
       
+      {(!state.data && !state.loading) // после выбора количества элементов кнопки убираются для избежания ошибок ста тысяч запросов к апи
+        &&<>
+            <Button 
+              rows={32} 
+              setData={ setData }
+            />
+            <Button 
+              rows={1000} 
+              setData={ setData }
+            />
+          </>
+      }
       {
-        state.data 
-        ? <Table 
-            { ...state }
-            filteredData = { filteredData }
-            sortData={ sortData }
-            setUser={ setUserInfo }
-            searchPanel={
-              <SearchPanel 
-                { ...state }
-                btn={ <Button getFilter={ getFilter } form={ state.form } /> } 
-                changeForm={ changeForm } 
-                value={ state.form }
-              />}
-          />
-        : <div>Пагади</div>
+        (!state.loading&&state.data) // условный рендер таблицы или загрузчика
+        ? <>
+            <SearchPanel 
+              { ...state }
+              btn={ 
+                <Button getFilter={ getFilter } form={ state.form } /> 
+              } 
+              changeForm={ changeForm } 
+              value={ state.form }
+            />
+            <Table 
+              { ...state }
+              filteredData = { filteredData }
+              sortData={ sortData }
+              setUser={ setUserInfo }
+              toggleLoading = { toggleLoading }
+            />
+          </>
+        :(state.loading)
+        ?<Loader />
+        : ''
       }
       {
         state.pagination 
@@ -134,7 +153,10 @@ function App() {
           nextClassName={'page-link'}
         />
       }
-      {state.clickedUser && <UserDetails user={ state.clickedUser } />}
+      {
+        state.clickedUser // если пользователь выбран - рендер карточки
+        && <UserDetails user={ state.clickedUser } />
+      }
     </div>
   );
 }

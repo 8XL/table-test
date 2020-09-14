@@ -2,10 +2,9 @@ import React from 'react';
 
 import { Arrow } from './arrow';
 
-export const Table = ({ data, sortData, setUser, searchPanel, filteredData, sortOrder, sortName }) => {
+export const Table = ({ data, sortData, setUser, filteredData, sortOrder, sortName }) => {
     return( 
         <>
-            { searchPanel }
             <table className='table table-hover'>
                 <thead>
                     <tr>

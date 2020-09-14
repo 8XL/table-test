@@ -32,6 +32,7 @@ export default (state, action) => {
                     ...state,
                     data: data,
                     pagination: false,
+                    loading: false
                 });
             } else {
                 view = pagination(data, state.page);
@@ -42,8 +43,15 @@ export default (state, action) => {
                     fullData: data,
                     pagination: true,
                     pageCount: pageCount,
+                    loading: false
                 });
             };
+        
+        case 'TOGGLE_LOADING':
+            return({
+                ...state,
+                loading: !state.loading
+            })
 
         case 'SORT_DATA':
             // сортировка списка по id колонки шапки таблицы
