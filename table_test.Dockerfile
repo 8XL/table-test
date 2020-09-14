@@ -1,14 +1,12 @@
-FROM alpine:3.9
-
-ENV NODE_VERSION 12.18.3
+FROM node:12
 
 WORKDIR /table_test
 
-RUN npm -g i serve
+RUN npm -g install serve
 
 COPY package*.json ./
 
-RUN npm i
+RUN npm install
 
 COPY src /table_test
 
