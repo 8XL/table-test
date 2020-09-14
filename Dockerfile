@@ -8,8 +8,8 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY src /app
 COPY public /app
+COPY src /app
 
 RUN npm run build
 
