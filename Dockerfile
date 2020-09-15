@@ -2,18 +2,16 @@ FROM node:12.8
 
 WORKDIR /app
 
-RUN npm -g install serve
+RUN npm install -g http-server
 
-COPY package.json /app
-COPY package-lock.json /app
+COPY package*.json /app
 
 RUN npm install
 
-COPY public /app
-COPY src /app
+COPY . .
 
 RUN npm run build
 
 EXPOSE 8080
 
-CMD ["serve", "-s", "dist", "-p", "8080"]
+CMD [ "http-server", "dist" ]
