@@ -89,15 +89,9 @@ export default (state, action) => {
                 page: action.payload,
                 data: view,
             });
-        
-        case 'SET_FORM':
-            return({
-                ...state,
-                form: action.payload,
-            });
 
         case 'SEARCH_FILTER':
-            if(state.form.length>0){
+            if(action.payload.length>0){
                 return({
                     ...state,
                     search: true
@@ -108,6 +102,26 @@ export default (state, action) => {
                     search: false
                 })
             };
+        
+        case 'FORM_VIEW':
+            return({
+                ...state,
+                viewForm: !state.viewForm
+            });
+
+        case 'SUBMIT_VIEW':
+            return({
+                ...state,
+                viewSubmit: true
+            });
+
+        case 'SET_NEW_USER':
+            return({
+                ...state,
+                data: [action.payload, ...state.data],
+                viewSubmit: false,
+                viewForm: false
+            });
 
         default: 
             return state;

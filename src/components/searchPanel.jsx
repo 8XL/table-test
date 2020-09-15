@@ -6,12 +6,20 @@ export const SearchPanel = ({btn, changeForm, value}) => {
              <div className='input-group-prepend'>
                 { btn }
             </div>
-            <input 
-                type='text' 
-                className='form-control'
+            <form 
+                id='search'
+                name='search'
                 onChange={ changeForm } 
-                value={ value }
-            />
+            >
+                <input 
+                    type='text' 
+                    form='search'
+                    name='search'
+                    className='form-control'
+                    value={ value }
+                />
+            </form>
+            
         </div>
     );
 };

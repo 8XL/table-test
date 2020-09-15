@@ -6,7 +6,7 @@ import './App.css';
 import { fetchUsers } from './api/fetchData';
 import reducer from './reducer';
 
-import { Table, UserDetails, Button, SearchPanel, Loader } from './components';
+import { Table, UserDetails, Button, SearchPanel, Loader, AddUser } from './components';
 
 function App() {
   const [state, dispatch] = React.useReducer(reducer, {
@@ -26,10 +26,23 @@ function App() {
     pageCount: null,
     page: 1,
 
-    form: null,
-    search: false
+    search: false,
+
+    viewForm: false,
+    viewSubmit: false
   });
 
+  const [form, setForm] = React.useState({
+    search: '',
+    newUser: {
+      id: '',
+      firstName: '',
+      lastName: '',
+      phone:'',
+      email: '',
+    }
+  })
+  
   const toggleLoading = () =>{ //переключатель рендера анимации загрузки
     dispatch({
       type: 'TOGGLE_LOADING'
@@ -66,24 +79,71 @@ function App() {
     })
   };
 
-  const changeForm = (e) =>{ // изменение инпута поиска
+  React.useEffect(()=>{
+    if(
+      form.newUser.id
+      &&form.newUser.firstName
+      &&form.newUser.lastName
+      &&form.newUser.phone
+      &&form.newUser.email
+      ){
+        dispatch({
+          type: 'SUBMIT_VIEW'
+        })
+      }
+  },[form])
+    
+  const changeForm = (e) =>{ // изменение форм поиска и новой строки
+    const name = e.target.name;
+    const value = e.target.value;
+    const formId = e.target.form.name;
+    
+    setForm(form=>({
+      ...form,
+      [formId]:{
+        ...form[formId],
+        [name]: value
+      }
+    }));
+  };
+
+  const getFilter = (e) => { // активация поиска
+    e.preventDefault();
     dispatch({
-      type: 'SET_FORM',
-      payload: e.target.value
+      type: 'SEARCH_FILTER',
+      payload: form.search.search
     })
   };
 
-  const getFilter = () => { // активация поиска
+  const toggleForm = () => {
     dispatch({
-      type: 'SEARCH_FILTER'
+      type:'FORM_VIEW'
     })
   };
+
+  const submitUser = (e) =>{
+    e.preventDefault();
+    dispatch({
+      type: 'SET_NEW_USER',
+      payload: form.newUser
+    })
+    setForm(form=>({
+      ...form,
+      newUser: {
+        id: '',
+        firstName: '',
+        lastName: '',
+        phone:'',
+        email: ''
+      }
+    }))
+  }
 
   //фильтрация в случае активации поиска
   const filteredData = () =>{
     if(!state.search)return state.data;
 
-    const mask = new RegExp(state.form, 'ig'); 
+    const mask = new RegExp(form.search.search, 'ig'); 
     const filteredData = state.data.filter(user=>{
       return (
         user['firstName'].search(mask)>=0
@@ -113,13 +173,20 @@ function App() {
       {
         (!state.loading&&state.data) // условный рендер таблицы или загрузчика
         ? <>
+            <AddUser 
+              {...state}
+              form={form.newUser}
+              changeForm={ changeForm }
+              toggler={ <Button toggleForm={ toggleForm } /> }
+              submitter={ <Button submitUser={ submitUser } />  }
+            />
             <SearchPanel 
               { ...state }
               btn={ 
-                <Button getFilter={ getFilter } form={ state.form } /> 
+                <Button getFilter={ getFilter } /> 
               } 
               changeForm={ changeForm } 
-              value={ state.form }
+              value={ form.search.search }
             />
             <Table 
               { ...state }
