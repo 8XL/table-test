@@ -32,7 +32,7 @@ function App() {
     viewSubmit: false
   });
 
-  const [form, setForm] = React.useState({
+  const [form, setForm] = React.useState({ // отдельно вынес стэйт под все формы
     search: '',
     newUser: {
       id: '',
@@ -79,7 +79,7 @@ function App() {
     })
   };
 
-  React.useEffect(()=>{
+  React.useEffect(()=>{ // рендер кнопки сабмита нового юзера в список
     if(
       form.newUser.id
       &&form.newUser.firstName
@@ -115,13 +115,13 @@ function App() {
     })
   };
 
-  const toggleForm = () => {
+  const toggleForm = () => { // рендер формы добавления нового юзера
     dispatch({
       type:'FORM_VIEW'
     })
   };
 
-  const submitUser = (e) =>{
+  const submitUser = (e) =>{ // добавление нового юзера в начало таблицы
     e.preventDefault();
     dispatch({
       type: 'SET_NEW_USER',
@@ -158,7 +158,8 @@ function App() {
   return (
     <div className="App">
       
-      {(!state.data && !state.loading) // после выбора количества элементов кнопки убираются для избежания ошибок ста тысяч запросов к апи
+      {
+        (!state.data && !state.loading) // после выбора количества элементов кнопки убираются для избежания ошибок ста тысяч запросов к апи
         &&<>
             <Button 
               rows={32} 
@@ -182,12 +183,11 @@ function App() {
             />
             <SearchPanel 
               { ...state }
-              btn={ 
-                <Button getFilter={ getFilter } /> 
-              } 
               changeForm={ changeForm } 
               value={ form.search.search }
-            />
+            >
+              <Button getFilter={ getFilter } /> 
+            </SearchPanel>
             <Table 
               { ...state }
               filteredData = { filteredData }

@@ -1,10 +1,10 @@
 import React from 'react';
 
-export const SearchPanel = ({btn, changeForm, value}) => {
+export const SearchPanel = ({btn, changeForm, value, children}) => {
     return(
         <div className='input-group mt-2 mb-2'>
              <div className='input-group-prepend'>
-                { btn }
+                { children }
             </div>
             <form 
                 id='search'
